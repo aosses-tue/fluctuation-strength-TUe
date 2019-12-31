@@ -1,5 +1,4 @@
-# fluctuation-strength-TUe
-Model of fluctuation strength
+# Model of fluctuation strength
 
 Model of fluctuation strength as used by [Osses, García, & Kohlrausch (2016)](http://dx.doi.org/10.1121/2.0000410). The model is contained in the script **FluctuationStrength_TUe.m**. A demo (**demo_osses2016a.m**) is provided to reproduce the figures in the paper. The sounds in WAV format are provided.
 
