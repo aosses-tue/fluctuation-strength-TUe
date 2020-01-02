@@ -56,4 +56,22 @@ catch
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+if nargout == 0
+    N = fs;
+    K = N/2;
+    hResponse = []; 
+    for i = 1:size(Hweight,1); 
+        hResponse(:,i) = freqz(Hweight(i,1:3),Hweight(i,4:6),K);
+    end
+    
+    hTot = hResponse(:,1);
+    for i = 2:size(Hweight,1)
+        hTot = hTot.*hResponse(:,i);
+    end
+    
+    figure;
+    plot(f,20*log10(abs(hTot))); 
+    xlim([0 50]);
+    xlabel('Frequency [Hz]')
+    ylabel('Relative amplitude [dB]')
 end

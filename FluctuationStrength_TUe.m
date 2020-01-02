@@ -60,7 +60,7 @@ fluct   = zeros(1,nFrames); % Memory allocation
 %% ei = peripheral_stage(insig,fs,N);
 % 1. Cosine window:
 window = ones(N,1);
-attackrelease = 50;
+attackrelease = 50; % ms
 window = il_Do_cos_ramp(window,fs,attackrelease,attackrelease);
 
 for iFrame = 1:nFrames
@@ -89,41 +89,6 @@ for iFrame = 1:nFrames
         
     %% 3. Modulation depth (estimation)
     [mdept,hBPi] = il_modulation_depths(ei,model_par.Hweight);
-    
-    bExtraCompensation = 0;
-    if bExtraCompensation == 1
-        method_vr = 2;
-        lvls = rmsdb(ei')+dBFS;
-        switch method_vr
-            case 0
-                val = ones(size(mdept)); % nothing done..
-                extraweight = ones(size(mdept));
-            case 1
-                val = From_dB(lvls);
-                val = val/max(val);
-                % model_par.cal = (1/0.4374)*model_par.cal; % 0.5693
-                model_par.cal = (1/0.5094)*model_par.cal; 
-                extraweight = val;
-            case 2
-                lvls = max(lvls,0);
-                lvls(isinf(lvls)) = 0;
-                val = phon2sone(lvls);
-                val = val/max(val);
-                % model_par.cal = (1/0.5002)*model_par.cal; % 0.4978
-                model_par.cal = (1/0.5916)*model_par.cal; 
-                extraweight = val;
-            case 3
-                % This does not work
-                lvls = max(lvls,0);
-                lvls(isinf(lvls)) = 0;
-                val = lvls/max(lvls);
-                model_par.cal = (1/0.6883)*model_par.cal; % 0.3618
-                extraweight = val;
-        end
-        
-        % mdept = mdept.*val;
-        % disp('Applying extra compensation as suggested by Duisters 2005, see his equation 5.13...')
-    end
     
     %% 4. Cross-correlation coefficient:
     %     (see model_par.dataset == 0, in _debug version)
@@ -701,15 +666,11 @@ function gain_dB = il_To_dB(gain)
 
 gain_dB = 20 * log10(gain);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function gain = il_From_dB(gain_dB,div)
-% function gain = il_From_dB(gain_dB,div)
+function gain = il_From_dB(gain_dB)
+% function gain = il_From_dB(gain_dB)
 %
 % 1. Description:
-%       From_dB: Convert decibels to voltage gain (if div = 20, default).
+%       From_dB: Convert decibels to linear gain.
 %       gain = From_dB(gain_dB)
 
-if nargin < 2
-    div = 20;
-end
-
-gain = 10 .^ (gain_dB / div);
+gain = 10 .^ (gain_dB / 20);

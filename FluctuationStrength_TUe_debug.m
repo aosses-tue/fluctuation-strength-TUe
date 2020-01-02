@@ -164,6 +164,7 @@ function [mdept,hBPi,outs] = il_modulation_depths(ei,Hweight)
 mdept   = zeros(1,Chno);
 
 ei      = transpose(abs(ei));
+outs.ei = ei;
 h0      = mean(ei);
 ei      = ei - repmat(h0,Nc,1);
 
@@ -706,15 +707,24 @@ function gain_dB = il_To_dB(gain)
 
 gain_dB = 20 * log10(gain);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function gain = il_From_dB(gain_dB,div)
 % function gain = il_From_dB(gain_dB,div)
+% % function gain = il_From_dB(gain_dB,div)
+% %
+% % 1. Description:
+% %       From_dB: Convert decibels to voltage gain (if div = 20, default).
+% %       gain = From_dB(gain_dB)
+% 
+% if nargin < 2
+%     div = 20;
+% end
+% 
+% gain = 10 .^ (gain_dB / div);
+
+function gain = il_From_dB(gain_dB)
+% function gain = il_From_dB(gain_dB)
 %
 % 1. Description:
-%       From_dB: Convert decibels to voltage gain (if div = 20, default).
+%       From_dB: Convert decibels to linear gain.
 %       gain = From_dB(gain_dB)
 
-if nargin < 2
-    div = 20;
-end
-
-gain = 10 .^ (gain_dB / div);
+gain = 10 .^ (gain_dB / 20);
